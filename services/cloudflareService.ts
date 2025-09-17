@@ -45,19 +45,21 @@ export const transcribeAudio = async (
     accountId: string,
     apiToken: string,
     audioFile: File,
-    onProgress: (message: string) => void
+    onProgress: (progress: { message: string; percentage: number }) => void
 ): Promise<string> => {
     const model = '@cf/openai/whisper-large-v3-turbo';
     
-    onProgress('Preparing audio data...');
+    onProgress({ message: 'Preparing audio data...', percentage: 0 });
     const audioData = await audioFile.arrayBuffer();
 
     if (audioData.byteLength <= CHUNK_SIZE) {
-        onProgress('Audio is small, transcribing in a single request...');
-        return await transcribeChunk(accountId, apiToken, model, audioData);
+        onProgress({ message: 'Audio is small, transcribing in a single request...', percentage: 10 });
+        const result = await transcribeChunk(accountId, apiToken, model, audioData);
+        onProgress({ message: 'Transcription complete!', percentage: 100 });
+        return result;
     }
 
-    onProgress('Audio is large, preparing chunks...');
+    onProgress({ message: 'Audio is large, preparing chunks...', percentage: 5 });
     const chunks: ArrayBuffer[] = [];
     for (let i = 0; i < audioData.byteLength; i += CHUNK_SIZE) {
         const chunk = audioData.slice(i, i + CHUNK_SIZE);
@@ -66,7 +68,9 @@ export const transcribeAudio = async (
 
     let fullTranscript = '';
     for (let i = 0; i < chunks.length; i++) {
-        onProgress(`Transcribing chunk ${i + 1} of ${chunks.length}...`);
+        // Allocate 90% of the progress bar to the chunk transcriptions
+        const percentage = 5 + Math.round(((i + 1) / chunks.length) * 90);
+        onProgress({ message: `Transcribing chunk ${i + 1} of ${chunks.length}...`, percentage });
         try {
             const transcript = await transcribeChunk(accountId, apiToken, model, chunks[i]);
             fullTranscript += transcript + ' ';
@@ -76,6 +80,6 @@ export const transcribeAudio = async (
         }
     }
 
-    onProgress('Transcription complete!');
+    onProgress({ message: 'Transcription complete!', percentage: 100 });
     return fullTranscript.trim();
 };

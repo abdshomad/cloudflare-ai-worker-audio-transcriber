@@ -17,6 +17,7 @@ const AudioTranscriber: React.FC<AudioTranscriberProps> = ({ accountId, apiToken
     const fileInputRef = useRef<HTMLInputElement>(null);
     const [isCopied, setIsCopied] = useState<boolean>(false);
     const [progressMessage, setProgressMessage] = useState<string>('');
+    const [progress, setProgress] = useState<number>(0);
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const selectedFile = e.target.files?.[0];
@@ -59,14 +60,22 @@ const AudioTranscriber: React.FC<AudioTranscriberProps> = ({ accountId, apiToken
         setError('');
         setTranscription('');
         setProgressMessage('');
+        setProgress(0);
+
+        const handleProgressUpdate = ({ message, percentage }: { message: string; percentage: number }) => {
+            setProgressMessage(message);
+            setProgress(percentage);
+        };
+
         try {
-            const result = await transcribeAudio(accountId, apiToken, file, setProgressMessage);
+            const result = await transcribeAudio(accountId, apiToken, file, handleProgressUpdate);
             setTranscription(result);
         } catch (err: any) {
             setError(err.message || 'An unknown error occurred.');
         } finally {
             setIsLoading(false);
             setProgressMessage('');
+            setProgress(0);
         }
     };
     
@@ -149,7 +158,7 @@ const AudioTranscriber: React.FC<AudioTranscriberProps> = ({ accountId, apiToken
 
                 {error && <div className="bg-red-900/50 border border-red-700 text-red-300 px-4 py-3 rounded-lg text-sm whitespace-pre-wrap font-mono">{error}</div>}
 
-                {isLoading && <Loader message={progressMessage || "Analyzing audio... this may take a moment."} />}
+                {isLoading && <Loader message={progressMessage || "Analyzing audio... this may take a moment."} progress={progress} />}
 
                 {transcription && (
                     <div className="space-y-4">

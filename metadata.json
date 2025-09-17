@@ -1,0 +1,5 @@
+{
+  "name": "Cloudflare AI Audio Transcriber",
+  "description": "An application to transcribe audio files using Cloudflare's Whisper AI model. Users can upload an audio file and provide their Cloudflare credentials to receive a transcription.",
+  "requestFramePermissions": []
+}

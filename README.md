@@ -5,9 +5,10 @@ This is a client-side web application that allows users to transcribe audio file
 ## Features
 
 - **Secure Credential Handling**: Your Cloudflare Account ID and API Token are handled entirely on the client-side and are **never stored or sent to any server** besides Cloudflare's API.
+- **Automatic Transcription on Upload**: Transcription begins automatically as soon as you select an audio file, creating a seamless workflow.
 - **Large File Support (Up to 200MB)**: Automatically chunks large audio files on the client-side to handle API limits gracefully.
+- **Adjustable Chunk Size**: For large files, you can select the chunk size (5, 10, 15, 20, or 24 MB) to optimize the transcription process.
 - **Drag & Drop File Upload**: Easily upload audio files by dragging them onto the application window.
-- **File Picker**: A traditional file picker is also available.
 - **Real-time Feedback**: Visual loaders and status messages keep you informed during the transcription process, including chunk-by-chunk progress.
 - **Error Handling**: Clear error messages are displayed if something goes wrong with the API request or file validation.
 - **Copy to Clipboard**: Quickly copy the entire transcription result with a single click.
@@ -16,8 +17,8 @@ This is a client-side web application that allows users to transcribe audio file
 ## How It Works
 
 1.  **Enter Credentials**: The application first prompts you for your Cloudflare Account ID and an API Token. This is required to authenticate with the Cloudflare AI API.
-2.  **Upload Audio**: You can then upload an audio file (e.g., MP3, WAV, M4A). The app supports files up to 200MB.
-3.  **Transcribe**: For large files, the app splits the audio into smaller chunks directly in your browser. It then sends each chunk sequentially to the Cloudflare AI API endpoint.
+2.  **Upload Audio**: You can then upload an audio file (e.g., MP3, WAV, M4A). The app supports files up to 200MB. Transcription starts immediately.
+3.  **Chunking (for large files)**: For files larger than 5MB, the app splits the audio into smaller chunks directly in your browser. You can adjust the chunk size. The app then sends each chunk sequentially to the Cloudflare AI API endpoint.
 4.  **Display Result**: Once all chunks are transcribed, the resulting text is combined and displayed in a clean, readable format.
 
 ## Getting Started
@@ -44,7 +45,7 @@ To use this application, you will need:
 2.  Enter your Cloudflare Account ID and the API Token you created.
 3.  Click "Proceed to Transcriber".
 4.  Drag and drop an audio file or click to select one from your device.
-5.  Click the "Transcribe Audio" button.
+5.  The transcription will start automatically. For large files, you can adjust the chunk size before or during the process.
 6.  Wait for the process to complete.
 7.  View and copy your transcription.
 

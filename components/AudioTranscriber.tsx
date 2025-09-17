@@ -1,4 +1,3 @@
-
 import React, { useState, useCallback, useRef } from 'react';
 import { transcribeAudio } from '../services/cloudflareService';
 import Loader from './Loader';
@@ -17,6 +16,7 @@ const AudioTranscriber: React.FC<AudioTranscriberProps> = ({ accountId, apiToken
     const [error, setError] = useState<string>('');
     const fileInputRef = useRef<HTMLInputElement>(null);
     const [isCopied, setIsCopied] = useState<boolean>(false);
+    const [progressMessage, setProgressMessage] = useState<string>('');
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const selectedFile = e.target.files?.[0];
@@ -35,8 +35,8 @@ const AudioTranscriber: React.FC<AudioTranscriberProps> = ({ accountId, apiToken
     }, []);
 
     const processFile = (selectedFile: File) => {
-        if (selectedFile.size > 25 * 1024 * 1024) {
-            setError('File is too large. Please upload a file smaller than 25MB.');
+        if (selectedFile.size > 200 * 1024 * 1024) {
+            setError('File is too large. Please upload a file smaller than 200MB.');
             setFile(null);
         } else {
             setFile(selectedFile);
@@ -58,13 +58,15 @@ const AudioTranscriber: React.FC<AudioTranscriberProps> = ({ accountId, apiToken
         setIsLoading(true);
         setError('');
         setTranscription('');
+        setProgressMessage('');
         try {
-            const result = await transcribeAudio(accountId, apiToken, file);
+            const result = await transcribeAudio(accountId, apiToken, file, setProgressMessage);
             setTranscription(result);
         } catch (err: any) {
             setError(err.message || 'An unknown error occurred.');
         } finally {
             setIsLoading(false);
+            setProgressMessage('');
         }
     };
     
@@ -115,7 +117,7 @@ const AudioTranscriber: React.FC<AudioTranscriberProps> = ({ accountId, apiToken
                             <p className="mt-2 text-gray-300">
                                 <span className="font-semibold text-blue-400">Click to upload</span> or drag and drop
                             </p>
-                            <p className="text-xs text-gray-500">MP3, WAV, M4A, etc. (Max 25MB)</p>
+                            <p className="text-xs text-gray-500">MP3, WAV, M4A, etc. (Max 200MB)</p>
                         </>
                     ) : (
                         <div className="flex flex-col items-center">
@@ -147,7 +149,7 @@ const AudioTranscriber: React.FC<AudioTranscriberProps> = ({ accountId, apiToken
 
                 {error && <div className="bg-red-900/50 border border-red-700 text-red-300 px-4 py-3 rounded-lg text-sm whitespace-pre-wrap font-mono">{error}</div>}
 
-                {isLoading && <Loader message="Analyzing audio... this may take a moment." />}
+                {isLoading && <Loader message={progressMessage || "Analyzing audio... this may take a moment."} />}
 
                 {transcription && (
                     <div className="space-y-4">

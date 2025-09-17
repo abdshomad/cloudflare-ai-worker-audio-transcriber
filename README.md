@@ -1,4 +1,3 @@
-
 # Cloudflare AI Audio Transcriber
 
 This is a client-side web application that allows users to transcribe audio files using Cloudflare's powerful `@cf/openai/whisper-large-v3-turbo` AI model. It provides a simple, secure, and user-friendly interface for getting text from your audio.
@@ -6,9 +5,10 @@ This is a client-side web application that allows users to transcribe audio file
 ## Features
 
 - **Secure Credential Handling**: Your Cloudflare Account ID and API Token are handled entirely on the client-side and are **never stored or sent to any server** besides Cloudflare's API.
+- **Large File Support (Up to 200MB)**: Automatically chunks large audio files on the client-side to handle API limits gracefully.
 - **Drag & Drop File Upload**: Easily upload audio files by dragging them onto the application window.
 - **File Picker**: A traditional file picker is also available.
-- **Real-time Feedback**: Visual loaders and status messages keep you informed during the transcription process.
+- **Real-time Feedback**: Visual loaders and status messages keep you informed during the transcription process, including chunk-by-chunk progress.
 - **Error Handling**: Clear error messages are displayed if something goes wrong with the API request or file validation.
 - **Copy to Clipboard**: Quickly copy the entire transcription result with a single click.
 - **Responsive Design**: The user interface is built with Tailwind CSS and is fully responsive for use on various devices.
@@ -16,9 +16,9 @@ This is a client-side web application that allows users to transcribe audio file
 ## How It Works
 
 1.  **Enter Credentials**: The application first prompts you for your Cloudflare Account ID and an API Token. This is required to authenticate with the Cloudflare AI API.
-2.  **Upload Audio**: You can then upload an audio file (e.g., MP3, WAV, M4A). The app has a size limit of 25MB, which is a common limit for direct API uploads.
-3.  **Transcribe**: The app sends the audio file directly from your browser to the Cloudflare AI API endpoint.
-4.  **Display Result**: Once the transcription is complete, the resulting text is displayed in a clean, readable format.
+2.  **Upload Audio**: You can then upload an audio file (e.g., MP3, WAV, M4A). The app supports files up to 200MB.
+3.  **Transcribe**: For large files, the app splits the audio into smaller chunks directly in your browser. It then sends each chunk sequentially to the Cloudflare AI API endpoint.
+4.  **Display Result**: Once all chunks are transcribed, the resulting text is combined and displayed in a clean, readable format.
 
 ## Getting Started
 
